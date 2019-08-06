@@ -1,8 +1,5 @@
-ARG DOCKER_COMPOSE_TAG=1.24.1
-ARG DOCKER_VER=18.09
-
-FROM docker/compose:${DOCKER_COMPOSE_TAG} AS docker-compose
-FROM docker:${DOCKER_VER} AS docker
+FROM docker/compose:1.24.1 AS docker-compose
+FROM docker:18.09 AS docker
 
 FROM amazeeio/php:7.2-cli-drupal
 
