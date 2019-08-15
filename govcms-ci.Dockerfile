@@ -52,4 +52,5 @@ RUN git --version \
   && npm -v \
   && node -v
 
-RUN rm -rf /app
+RUN composer clear-cache \
+  && rm -rf /app
