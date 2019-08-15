@@ -5,7 +5,6 @@ FROM amazeeio/php:7.2-cli-drupal
 
 RUN apk update \
   && apk add --no-cache \
-      jq \
       zip \
       zlib \
       libgcc \
@@ -13,10 +12,10 @@ RUN apk update \
   && wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
   && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-2.29-r0.apk \
   && apk add glibc-2.29-r0.apk \
-  && wget -O /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/2.4.0/yq_linux_amd64" \
-  && chmod +x /usr/local/bin/yq \
   && rm -rf /var/cache/apk/* \
-  && apk del --purge .deps
+  && apk del --purge .deps \
+  && composer clear-cache \
+  && rm -rf /app
 
 # temporary package overrides to remediate secvuls
 RUN apk del --no-cache curl libcurl && apk add --no-cache "curl=7.64.0-r2" "libcurl=7.64.0-r2" --repository http://dl-cdn.alpinelinux.org/alpine/v3.8/main/ \
@@ -28,13 +27,24 @@ ENV LD_LIBRARY_PATH=/lib:/usr/lib
 COPY --from=docker /usr/local/bin/docker /bin
 COPY --from=docker-compose /usr/local/bin/docker-compose /usr/local/bin/docker-compose
 
-# Install Goss.
-ENV GOSS_FILES_STRATEGY=cp
-RUN curl -fsSL https://goss.rocks/install | sh
+# Install yq for YAML parsing
+RUN wget -O /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/2.4.0/yq_linux_amd64" \
+  && chmod +x /usr/local/bin/yq
+
+# Install jq for JSON parsing
+RUN wget -O /usr/local/bin/jq "https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64" \
+  && chmod +x /usr/local/bin/jq
 
 # Install Ahoy.
-RUN curl -L https://github.com/ahoy-cli/ahoy/releases/download/2.0.0/ahoy-bin-`uname -s`-amd64 -o /usr/local/bin/ahoy \
+RUN wget -O /usr/local/bin/ahoy "https://github.com/ahoy-cli/ahoy/releases/download/2.0.0/ahoy-bin-linux-amd64" \
   && chmod +x /usr/local/bin/ahoy
+
+# Install Goss (and dgoss) for server validation.
+ENV GOSS_FILES_STRATEGY=cp
+RUN wget -O /usr/local/bin/goss https://github.com/aelsabbahy/goss/releases/download/v0.3.6/goss-linux-amd64 \
+  && chmod +x /usr/local/bin/goss \
+  && wget -O /usr/local/bin/dgoss https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dgoss \
+  && chmod +x /usr/local/bin/dgoss
 
 # Install a stub for pygmy.
 # Some frameworks may require presence of pygmy to run, but pygmy is not required in CI container.
@@ -55,6 +65,3 @@ RUN git --version \
   && composer --version \
   && npm -v \
   && node -v
-
-RUN composer clear-cache \
-  && rm -rf /app
