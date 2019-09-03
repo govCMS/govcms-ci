@@ -17,8 +17,8 @@ RUN apk update \
   && composer clear-cache \
   && rm -rf /app
 
-# temporary package overrides to remediate secvuls
-RUN apk del --no-cache expat && apk add --no-cache "expat=2.2.7-r0" "expat=2.2.7-r0" --repository http://dl-cdn.alpinelinux.org/alpine/v3.8/main/
+# temporary package update whilst we wait for https://github.com/amazeeio/lagoon/pull/1213
+RUN apk update && apk upgrade nghttp2-libs
 
 # Required for docker-compose to find zlib.
 ENV LD_LIBRARY_PATH=/lib:/usr/lib
