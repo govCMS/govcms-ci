@@ -18,8 +18,7 @@ RUN apk update \
   && rm -rf /app
 
 # temporary package overrides to remediate secvuls
-RUN apk del --no-cache curl libcurl && apk add --no-cache "curl=7.64.0-r2" "libcurl=7.64.0-r2" --repository http://dl-cdn.alpinelinux.org/alpine/v3.8/main/ \
-  && apk del --no-cache expat && apk add --no-cache "expat=2.2.7-r0" "expat=2.2.7-r0" --repository http://dl-cdn.alpinelinux.org/alpine/v3.8/main/
+RUN apk del --no-cache expat && apk add --no-cache "expat=2.2.7-r0" "expat=2.2.7-r0" --repository http://dl-cdn.alpinelinux.org/alpine/v3.8/main/
 
 # Required for docker-compose to find zlib.
 ENV LD_LIBRARY_PATH=/lib:/usr/lib
