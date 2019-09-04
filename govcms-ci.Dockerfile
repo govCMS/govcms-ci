@@ -17,9 +17,6 @@ RUN apk update \
   && composer clear-cache \
   && rm -rf /app
 
-# temporary package update whilst we wait for https://github.com/amazeeio/lagoon/pull/1213
-RUN apk update && apk upgrade nghttp2-libs
-
 # Required for docker-compose to find zlib.
 ENV LD_LIBRARY_PATH=/lib:/usr/lib
 
