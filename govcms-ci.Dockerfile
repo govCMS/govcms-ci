@@ -3,6 +3,9 @@ FROM docker:18.09 AS docker
 
 FROM amazeeio/php:7.2-cli-drupal
 
+LABEL maintainer="govcms@finance.gov.au"
+LABEL description="GovCMS base image for use in CI processes"
+
 RUN apk update \
   && apk add --no-cache \
       zip \
