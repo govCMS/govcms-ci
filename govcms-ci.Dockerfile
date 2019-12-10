@@ -1,7 +1,7 @@
 FROM docker/compose:1.24.1 AS docker-compose
 FROM docker:18.09 AS docker
 
-FROM amazeeio/php:7.2-cli-drupal-develop
+FROM amazeeiolagoon/php:7.2-cli-drupal-develop
 
 LABEL maintainer="govcms@finance.gov.au"
 LABEL description="GovCMS base image for use in CI processes"
