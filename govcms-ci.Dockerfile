@@ -20,6 +20,12 @@ RUN apk update \
   && composer clear-cache \
   && rm -rf /app
 
+# Install shellcheck and BATS tools
+RUN apk update \
+  && apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
+      bats \
+      shellcheck 
+
 # Required for docker-compose to find zlib.
 ENV LD_LIBRARY_PATH=/lib:/usr/lib
 
@@ -59,6 +65,8 @@ RUN git --version \
   && yq --version \
   && ahoy --version \
   && goss --version \
+  && shellcheck --version \
+  && bats -v \
   && docker --version \
   && docker-compose version \
   && composer --version \
