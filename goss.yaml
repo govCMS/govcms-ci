@@ -1,0 +1,120 @@
+command:
+
+  which git:
+    exit-status: 0
+    stdout:
+    - /usr/bin/git
+    stderr: []
+    timeout: 10000
+
+  which curl:
+    exit-status: 0
+    stdout:
+    - /usr/bin/curl
+    stderr: []
+    timeout: 10000
+
+  which zip:
+    exit-status: 0
+    stdout:
+    - /usr/bin/zip
+    stderr: []
+    timeout: 10000
+
+  which unzip:
+    exit-status: 0
+    stdout:
+    - /usr/bin/unzip
+    stderr: []
+    timeout: 10000
+
+  which goss:
+    exit-status: 0
+    stdout:
+    - /usr/local/bin/goss
+    stderr: []
+    timeout: 10000
+
+  which docker:
+    exit-status: 0
+    stdout:
+      - /bin/docker
+    stderr: []
+    timeout: 10000
+
+  which docker-compose:
+    exit-status: 0
+    stdout:
+    - /usr/local/bin/docker-compose
+    stderr: []
+    timeout: 10000
+
+  which composer:
+    exit-status: 0
+    stdout:
+    - /usr/local/bin/composer
+    stderr: []
+    timeout: 10000
+
+  composer global info:
+    exit-status: 0
+    stdout:
+    - /.*composer parallel install plugin/
+    stderr: []
+    timeout: 10000
+
+  which node:
+    exit-status: 0
+    stdout:
+    - /usr/bin/node
+    stderr: []
+    timeout: 10000
+
+  which npm:
+    exit-status: 0
+    stdout:
+    - /usr/bin/npm
+    stderr: []
+    timeout: 10000
+
+  which ahoy:
+    exit-status: 0
+    stdout:
+    - /usr/local/bin/ahoy
+    stderr: []
+    timeout: 10000
+
+  which yq:
+    exit-status: 0
+    stdout:
+    - /usr/local/bin/yq
+    stderr: []
+    timeout: 10000
+
+  which jq:
+    exit-status: 0
+    stdout:
+    - /usr/local/bin/jq
+    stderr: []
+    timeout: 10000
+
+  which shellcheck:
+    exit-status: 0
+    stdout:
+      - /usr/bin/shellcheck
+    stderr: []
+    timeout: 10000
+
+  which bats:
+    exit-status: 0
+    stdout:
+      - /usr/bin/bats
+    stderr: []
+    timeout: 10000
+
+  which pygmy:
+    exit-status: 0
+    stdout:
+      - /usr/local/bin/pygmy
+    stderr: []
+    timeout: 10000
