@@ -20,11 +20,11 @@ RUN apk update \
   && composer clear-cache \
   && rm -rf /app
 
-# Install shellcheck and BATS tools
+# Install shellcheck and BATS tools.
 RUN apk update \
   && apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
       bats \
-      shellcheck 
+      shellcheck
 
 # Required for docker-compose to find zlib.
 ENV LD_LIBRARY_PATH=/lib:/usr/lib
@@ -32,11 +32,11 @@ ENV LD_LIBRARY_PATH=/lib:/usr/lib
 COPY --from=docker /usr/local/bin/docker /bin
 COPY --from=docker-compose /usr/local/bin/docker-compose /usr/local/bin/docker-compose
 
-# Install yq for YAML parsing
+# Install yq for YAML parsing.
 RUN wget -O /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/2.4.0/yq_linux_amd64" \
   && chmod +x /usr/local/bin/yq
 
-# Install jq for JSON parsing
+# Install jq for JSON parsing.
 RUN wget -O /usr/local/bin/jq "https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64" \
   && chmod +x /usr/local/bin/jq
 
