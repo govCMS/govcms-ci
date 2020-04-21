@@ -22,8 +22,8 @@ RUN apk update \
 
 # Install shellcheck.
 RUN curl -L -o "/tmp/shellcheck-v0.7.1.tar.xz" "https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz" \
-  && tar --xz -xvf "/tmp/shellcheck-v0.7.1.tar.xz" \
-  && mv "shellcheck-v0.7.1/shellcheck" /usr/bin/ \
+  && tar -C /tmp --xz -xvf "/tmp/shellcheck-v0.7.1.tar.xz" \
+  && mv "/tmp/shellcheck-v0.7.1/shellcheck" /usr/bin/ \
   && chmod +x /usr/bin/shellcheck
 
 # Install BATS.
