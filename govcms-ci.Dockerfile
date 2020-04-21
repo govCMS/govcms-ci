@@ -20,11 +20,14 @@ RUN apk update \
   && composer clear-cache \
   && rm -rf /app
 
-# Install shellcheck and BATS tools.
-RUN apk update \
-  && apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
-      bats \
-      shellcheck
+# Install shellcheck.
+RUN curl -L -o "/tmp/shellcheck-v0.7.1.tar.xz" "https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz" \
+  && tar --xz -xvf "/tmp/shellcheck-v0.7.1.tar.xz" \
+  && mv "shellcheck-v0.7.1/shellcheck" /usr/bin/ \
+  && chmod +x /usr/bin/shellcheck
+
+# Install BATS.
+RUN apk update && apk add --no-cache bats
 
 # Required for docker-compose to find zlib.
 ENV LD_LIBRARY_PATH=/lib:/usr/lib
