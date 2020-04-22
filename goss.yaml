@@ -118,3 +118,12 @@ command:
       - /usr/local/bin/pygmy
     stderr: []
     timeout: 10000
+
+  # Assert that /app is empty so that consumer CI run could checkout the codebase.
+  assert empty app:
+    exec: ls -A /app | wc -l
+    exit-status: 0
+    stdout:
+      - 0
+    stderr: []
+    timeout: 10000
