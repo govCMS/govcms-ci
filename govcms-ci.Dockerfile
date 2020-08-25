@@ -76,6 +76,6 @@ RUN git --version \
   && npm -v \
   && node -v
 
-COPY composer.json composer.lock /app/
+COPY composer.json /app/
 RUN composer install -d /app && composer cc
 ENV PATH="/app/vendor/bin:${PATH}"
