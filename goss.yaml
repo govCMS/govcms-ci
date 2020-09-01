@@ -119,10 +119,10 @@ command:
     stderr: []
     timeout: 10000
 
-  which yaml-lint:
+  which govcms-yaml_lint:
     exit-status: 0
     stdout:
-      - /govcms/vendor/bin/yaml-lint
+      - /govcms/vendor/bin/govcms-yaml_lint
     stderr: []
     timeout: 10000
 
