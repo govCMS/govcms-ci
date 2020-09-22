@@ -75,3 +75,8 @@ RUN git --version \
   && composer --version \
   && npm -v \
   && node -v
+
+COPY composer.json /govcms/
+ENV COMPOSER_MEMORY_LIMIT=-1
+RUN composer install -d /govcms && composer cc
+ENV PATH="/govcms/vendor/bin:${PATH}"

@@ -1,0 +1,14 @@
+version: '2.3'
+
+x-environment:
+  &default-environment
+    DOCKERHOST: ${DOCKERHOST:-}
+
+services:
+  ci:
+    build:
+      context: .
+      dockerfile: govcms-ci.Dockerfile
+    image: govcms-ci
+    environment:
+      << : *default-environment
