@@ -17,7 +17,7 @@
     ],
     "minimum-stability": "alpha",
     "require": {
-        "govcms/scaffold-tooling": "dev-feature/validate-scripts"
+        "govcms/scaffold-tooling": "~2"
     },
     "replace": {
         "drupal/core": "*",
