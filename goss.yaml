@@ -119,6 +119,13 @@ command:
     stderr: []
     timeout: 10000
 
+  which govcms-yaml_lint:
+    exit-status: 0
+    stdout:
+      - /govcms/vendor/bin/govcms-yaml_lint
+    stderr: []
+    timeout: 10000
+
   # Assert that /app is empty so that consumer CI run could checkout the codebase.
   assert empty app:
     exec: ls -A /app | wc -l
