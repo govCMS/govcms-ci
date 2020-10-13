@@ -17,7 +17,9 @@
     ],
     "minimum-stability": "alpha",
     "require": {
-        "govcms/scaffold-tooling": "~2"
+        "govcms/scaffold-tooling": "~2",
+        "symfony/yaml": "~5",
+        "symfony/console": "~5"
     },
     "replace": {
         "drupal/core": "*",
