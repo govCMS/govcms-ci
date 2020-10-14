@@ -1,0 +1,17 @@
+#!/bin/bash
+# hooks:build
+# https://docs.docker.com/docker-cloud/builds/advanced/
+
+echo "[***] Build hook starting..."
+
+echo "[---] DOCKERFILE_PATH: ${DOCKERFILE_PATH}"
+echo "[---] DOCKER_REPO: ${DOCKER_REPO}"
+echo "[---] IMAGE_NAME: ${IMAGE_NAME}"
+
+if [ "$SOURCE_BRANCH" = "develop" ]; then
+  # Pin to the develop branch for scaffold-tooling.
+  sed -i.bak -E "s#(\"govcms\/scaffold-tooling\":[[:space:]]*\").+(\")#\1dev-develop\2#g" composer.json
+fi
+
+# Build the image.
+docker build -f $DOCKERFILE_PATH -t $IMAGE_NAME .
