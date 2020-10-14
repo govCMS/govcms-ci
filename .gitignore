@@ -2,3 +2,4 @@
 /modules/
 /core/
 composer.lock
+*.bak
