@@ -8,7 +8,14 @@ stages:
 build:
   stage: build
   script:
-    - scripts/gitlab-build
+    - printenv
+    - IMAGE_TAG=$([ $CI_COMMIT_BRANCH = 'master' ] && echo 'latest' || echo 'edge')
+    - scripts/prepare
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f govcms-ci.Dockerfile -t $CI_REGISTRY/govcms/govcms-ci:${IMAGE_TAG} .
+    - docker push $CI_REGISTRY/govcms/govcms-ci:${IMAGE_TAG}
+  variables:
+    DOCKER_HOST: tcp://localhost:2375
   only:
-    - master
     - develop
+    - master

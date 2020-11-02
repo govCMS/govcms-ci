@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "[***] Preparing repository..."
+echo "[---] CI_REGISTRY: ${CI_REGISTRY}"
+
+if [ "$CI_COMMIT_BRANCH" != "master" ]; then
+  # Pin to the develop branch for scaffold-tooling.
+  sed -i.bak -E "s#(\"govcms\/scaffold-tooling\":[[:space:]]*\").+(\")#\1dev-develop\2#g" composer.json
+  echo "[---] Updated to govcms/scaffold-tooling:dev-develop"
+fi
