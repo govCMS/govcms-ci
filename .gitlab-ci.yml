@@ -1,6 +1,6 @@
 image: gitlab-registry-production.govcms.amazee.io/govcms/govcms-ci:latest
 services:
-  - docker:dind
+  - gitlab-registry-production.govcms.amazee.io/govcms/govcms-ci/dind:latest
 
 stages:
   - build
@@ -14,6 +14,10 @@ build:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -f govcms-ci.Dockerfile -t $CI_REGISTRY/govcms/govcms-ci:${IMAGE_TAG} .
     - docker push $CI_REGISTRY/govcms/govcms-ci:${IMAGE_TAG}
+    # Refresh internal docker:dind image.
+    - docker pull docker:dind
+    - docker tag docker:dind $CI_REGISTRY/govcms/govcms-ci/dind:latest
+    - docker push $CI_REGISTRY/govcms/govcms-ci/dind:latest
   variables:
     DOCKER_HOST: tcp://localhost:2375
   only:
