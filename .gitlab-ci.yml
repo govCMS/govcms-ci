@@ -1,6 +1,7 @@
 image: gitlab-registry-production.govcms.amazee.io/govcms/govcms-ci:latest
 services:
-  - gitlab-registry-production.govcms.amazee.io/govcms/govcms-ci/dind:latest
+  - name: gitlab-registry-production.govcms.amazee.io/govcms/govcms-ci/dind:latest
+    command: ["--tls=false"]
 
 stages:
   - build
