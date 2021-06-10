@@ -17,7 +17,6 @@
     ],
     "minimum-stability": "alpha",
     "require": {
-        "ekino/phpstan-banned-code": "^0.4.0",
         "govcms/scaffold-tooling": "~2",
         "symfony/yaml": "~5",
         "symfony/console": "~5"
