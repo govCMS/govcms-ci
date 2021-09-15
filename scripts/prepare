@@ -5,6 +5,6 @@ echo "[---] CI_REGISTRY: ${CI_REGISTRY}"
 
 if [ "$CI_COMMIT_BRANCH" != "master" ]; then
   # Pin to the develop branch for scaffold-tooling.
-  sed -i.bak -E "s#(\"govcms\/scaffold-tooling\":[[:space:]]*\").+(\")#\1dev-9x-develop\2#g" composer.json
+  sed -i.bak -E "s#(\"govcms\/scaffold-tooling\":[[:space:]]*\").+(\")#\1dev-9.x-develop\2#g" composer.json
   echo "[---] Updated to govcms/scaffold-tooling:dev-develop"
 fi
