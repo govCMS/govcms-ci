@@ -27,7 +27,7 @@ RUN curl -L -o "/tmp/shellcheck-v0.7.1.tar.xz" "https://github.com/koalaman/shel
   && chmod +x /usr/bin/shellcheck
 
 # Install BATS.
-RUN apk update && apk add --no-cache bats
+RUN apk add --no-cache bats=1.3.0-r0 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.14/main
 
 # Required for docker-compose to find zlib.
 ENV LD_LIBRARY_PATH=/lib:/usr/lib
@@ -78,5 +78,5 @@ RUN git --version \
 
 COPY composer.json /govcms/
 ENV COMPOSER_MEMORY_LIMIT=-1
-RUN composer install -d /govcms && composer cc
+RUN composer self-update --1 && composer install -d /govcms && composer cc
 ENV PATH="/govcms/vendor/bin:${PATH}"
