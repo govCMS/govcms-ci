@@ -23,3 +23,15 @@ build:
   only:
     - develop
     - master
+
+build:buildx:
+  stage: build
+  script:
+    - scripts/prepare
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f govcms-ci-buildx.Dockerfile -t $CI_REGISTRY/govcms/govcms-ci-buildx .
+    - docker push $CI_REGISTRY/govcms/govcms-ci-buildx
+  variables:
+    DOCKER_HOST: tcp://localhost:2375
+  only:
+    - buildx
