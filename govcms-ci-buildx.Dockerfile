@@ -1,72 +1,93 @@
-ARG DOCKER_VERSION="20.10.10"
-ARG BUILDKIT_VERSION="0.9.1"
-ARG BUILDX_VERSION="0.6.3"
-ARG COMPOSE_VERSION="2.0.1"
+FROM debian:stable-slim
 
-FROM moby/buildkit:v${BUILDKIT_VERSION} as buildkit
-FROM docker/buildx-bin:${BUILDX_VERSION} as buildx
+LABEL maintainer="govcms@finance.gov.au"
+LABEL description="GovCMS base image for use in CI processes"
 
-FROM alpine:3.14 AS base
+# TODO remove config.json this flag once it's not needed for `buildx` anymore
+COPY buildx/config.json /root/.docker/
+COPY buildx/debian-backports-pin-600.pref /etc/apt/preferences.d/
+COPY buildx/debian-backports.list /etc/apt/sources.list.d/
 
-FROM base AS docker-static
-ARG TARGETPLATFORM
-ARG DOCKER_VERSION
-WORKDIR /opt/docker
-RUN DOCKER_ARCH=$(case ${TARGETPLATFORM:-linux/amd64} in \
-    "linux/amd64")   echo "x86_64"  ;; \
-    "linux/arm/v7")  echo "armhf"   ;; \
-    "linux/arm64")   echo "aarch64" ;; \
-    *)               echo ""        ;; esac) \
-  && echo "DOCKER_ARCH=$DOCKER_ARCH" \
-  && wget -qO- "https://download.docker.com/linux/static/stable/${DOCKER_ARCH}/docker-${DOCKER_VERSION}.tgz" | tar xvz --strip 1
+# Upgrades the image, Installs docker and qemu
+RUN  set -eux; \
+    \
+    export DEBIAN_FRONTEND=noninteractive; \
+    export TERM=linux; \
+    \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+      apt-transport-https \
+      gnupg2 \
+      software-properties-common \
+      \
+      ca-certificates \
+      \
+      git \
+      jq \
+      curl \
+      wget \
+      \
+      binfmt-support \
+      qemu-user-static \
+    ; \
+    # Workaround for https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=923479
+    c_rehash; \
+    \
+    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -; \
+    add-apt-repository "deb https://download.docker.com/linux/debian $(lsb_release -cs) stable"; \
+    apt-get update; \
+    apt-get install -y  --no-install-recommends \
+      docker-ce-cli \
+      docker-compose \
+    ; \
+    apt-get autoremove --purge -y \
+      apt-transport-https \
+      gnupg2 \
+      software-properties-common \
+    ; \
+    apt-get autoremove --purge -y; \
+    rm -rf /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*; \
+    \
+    # Versions
+    qemu-i386-static --version; \
+    docker buildx version
 
-FROM base AS compose
-ARG TARGETPLATFORM
-ARG COMPOSE_VERSION
-WORKDIR /opt
-RUN COMPOSE_ARCH=$(case ${TARGETPLATFORM:-linux/amd64} in \
-    "linux/amd64")   echo "linux-x86_64"  ;; \
-    "linux/arm/v7")  echo "linux-armv7"  ;; \
-    "linux/arm64")   echo "linux-aarch64"  ;; \
-    *)               echo ""        ;; esac) \
-  && echo "COMPOSE_ARCH=$COMPOSE_ARCH" \
-  && wget -q "https://github.com/docker/compose/releases/download/v${COMPOSE_VERSION}/docker-compose-${COMPOSE_ARCH}" -qO "/opt/docker-compose" \
-  && chmod +x /opt/docker-compose
+##
+## Adds common GovCMS tooling
+##
+RUN apt-get update
+RUN apt-get install -y zip unzip ssh
 
-FROM alpine:3.14
+ENV PATH="/govcms/vendor/bin:/usr/local/bin:${PATH}"
 
-RUN apk --update --no-cache add \
-    bash \
-    ca-certificates \
-    docker-compose \
-    openssh-client \
-  && rm -rf /tmp/* /var/cache/apk/*
+# Install yq (jq already installed)
+RUN curl -L "https://github.com/mikefarah/yq/releases/download/v4.14.1/yq_$(uname -s)_$(uname -m)" -o /usr/local/bin/yq &&\
+    chmod +x /usr/local/bin/yq
 
-COPY --from=docker-static /opt/docker/ /usr/local/bin/
-COPY --from=buildkit /usr/bin/buildctl /usr/local/bin/buildctl
-COPY --from=buildkit /usr/bin/buildkit* /usr/local/bin/
-COPY --from=buildx /buildx /usr/libexec/docker/cli-plugins/docker-buildx
-COPY --from=compose /opt/docker-compose /usr/libexec/docker/cli-plugins/docker-compose
+# Install ahoy
+RUN curl -L "https://github.com/ahoy-cli/ahoy/releases/download/2.0.0/ahoy-bin-$(uname -s)-$(uname -m)" -o /usr/local/bin/ahoy &&\
+    chmod +x /usr/local/bin/ahoy
 
-# https://github.com/docker-library/docker/pull/166
-#   dockerd-entrypoint.sh uses DOCKER_TLS_CERTDIR for auto-generating TLS certificates
-#   docker-entrypoint.sh uses DOCKER_TLS_CERTDIR for auto-setting DOCKER_TLS_VERIFY and DOCKER_CERT_PATH
-# (For this to work, at least the "client" subdirectory of this path needs to be shared between the client and server containers via a volume, "docker cp", or other means of data sharing.)
-ENV DOCKER_TLS_CERTDIR=/certs
-ENV DOCKER_CLI_EXPERIMENTAL=enabled
+# Install a stub for pygmy.
+# Some frameworks may require presence of pygmy to run, but pygmy is not required in CI container.
+RUN touch /usr/local/bin/pygmy \
+  && chmod +x /usr/local/bin/pygmy
 
-RUN docker --version \
-  && buildkitd --version \
-  && buildctl --version \
-  && docker buildx version \
-  && docker compose version \
-  && docker-compose --version \
-  && mkdir /certs /certs/client \
-  && chmod 1777 /certs /certs/client
+RUN git --version \
+  && zip --version \
+  && unzip -v \
+  && curl --version \
+  && jq --version \
+  && yq --version \
+  && goss --version \
+  && shellcheck --version \
+  && bats -v \
+  && docker --version \
+  && docker-compose version \
+  && composer --version \
+  && npm -v \
+  && node -v
 
-COPY rootfs/modprobe.sh /usr/local/bin/modprobe
-COPY rootfs/docker-entrypoint.sh /usr/local/bin/
-
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["sh"]
-
+COPY composer.json /govcms/
+ENV COMPOSER_MEMORY_LIMIT=-1
+RUN composer self-update --1 && composer install -d /govcms && composer cc
