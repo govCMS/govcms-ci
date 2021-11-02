@@ -139,7 +139,7 @@ RUN git --version \
   && npm -v \
   && node -v
 
-RUN docker buildx create --name govcms-amd-arm --platform linux/amd64,linux/arm64
+RUN docker buildx create --name govcms-amd-arm --platform linux/amd64,linux/arm64 tcp://localhost:2375
 
 RUN docker buildx ls
 
