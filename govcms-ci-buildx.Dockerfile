@@ -105,4 +105,4 @@ RUN git --version \
 
 COPY composer.json /govcms/
 ENV COMPOSER_MEMORY_LIMIT=-1
-RUN composer self-update --1 && composer install -d /govcms && composer cc
+RUN composer install -d /govcms && composer cc
