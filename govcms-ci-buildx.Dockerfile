@@ -56,17 +56,34 @@ RUN  set -eux; \
 ## Adds common GovCMS tooling
 ##
 RUN apt-get update
-RUN apt-get install -y zip unzip ssh
+RUN apt-get install -y zip unzip ssh xz-utils bats php-cli
 
 ENV PATH="/govcms/vendor/bin:/usr/local/bin:${PATH}"
 
+# Install composer
+RUN wget -O composer-setup.php https://getcomposer.org/installer &&\
+  php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
 # Install yq (jq already installed)
-RUN curl -L "https://github.com/mikefarah/yq/releases/download/v4.14.1/yq_$(uname -s)_$(uname -m)" -o /usr/local/bin/yq &&\
+RUN curl -L "https://github.com/mikefarah/yq/releases/download/v4.14.1/yq_linux_amd64" -o /usr/local/bin/yq &&\
     chmod +x /usr/local/bin/yq
 
 # Install ahoy
 RUN curl -L "https://github.com/ahoy-cli/ahoy/releases/download/2.0.0/ahoy-bin-$(uname -s)-$(uname -m)" -o /usr/local/bin/ahoy &&\
     chmod +x /usr/local/bin/ahoy
+
+# Install Goss (and dgoss) for server validation.
+ENV GOSS_FILES_STRATEGY=cp
+RUN wget -O /usr/local/bin/goss https://github.com/aelsabbahy/goss/releases/download/v0.3.6/goss-linux-amd64 \
+  && chmod +x /usr/local/bin/goss \
+  && wget -O /usr/local/bin/dgoss https://raw.githubusercontent.com/aelsabbahy/goss/master/extras/dgoss/dgoss \
+  && chmod +x /usr/local/bin/dgoss
+
+# Install shellcheck.
+RUN curl -L -o "/tmp/shellcheck-v0.7.1.tar.xz" "https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz" \
+  && tar -C /tmp --xz -xvf "/tmp/shellcheck-v0.7.1.tar.xz" \
+  && mv "/tmp/shellcheck-v0.7.1/shellcheck" /usr/bin/ \
+  && chmod +x /usr/bin/shellcheck
 
 # Install a stub for pygmy.
 # Some frameworks may require presence of pygmy to run, but pygmy is not required in CI container.
@@ -84,9 +101,7 @@ RUN git --version \
   && bats -v \
   && docker --version \
   && docker-compose version \
-  && composer --version \
-  && npm -v \
-  && node -v
+  && composer --version
 
 COPY composer.json /govcms/
 ENV COMPOSER_MEMORY_LIMIT=-1
