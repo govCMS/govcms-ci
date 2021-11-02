@@ -141,6 +141,8 @@ RUN git --version \
 
 RUN docker buildx create --name govcms-amd-arm --platform linux/amd64,linux/arm64
 
+RUN docker buildx ls
+
 COPY composer.json /govcms/
 ENV COMPOSER_MEMORY_LIMIT=-1
 RUN composer self-update --1 && composer install -d /govcms && composer cc
