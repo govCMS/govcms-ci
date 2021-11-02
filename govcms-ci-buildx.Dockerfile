@@ -140,8 +140,8 @@ RUN git --version \
   && node -v
 
 RUN docker buildx create --name govcms-amd-arm --platform linux/amd64,linux/arm64 tcp://localhost:2375
-
 RUN docker buildx ls
+RUN docker ps
 
 COPY composer.json /govcms/
 ENV COMPOSER_MEMORY_LIMIT=-1
