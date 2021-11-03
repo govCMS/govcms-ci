@@ -69,7 +69,7 @@ RUN curl -L "https://github.com/mikefarah/yq/releases/download/v4.14.1/yq_linux_
     chmod +x /usr/local/bin/yq
 
 # Install ahoy
-RUN curl -L "https://github.com/ahoy-cli/ahoy/releases/download/2.0.0/ahoy-bin-$(uname -s)-$(uname -m)" -o /usr/local/bin/ahoy &&\
+RUN curl -L "https://github.com/ahoy-cli/ahoy/releases/download/2.0.0/ahoy-bin-linux-amd64" -o /usr/local/bin/ahoy &&\
     chmod +x /usr/local/bin/ahoy
 
 # Install Goss (and dgoss) for server validation.
