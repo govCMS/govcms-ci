@@ -4,7 +4,8 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/govCMS/scaffold-tooling.git"
+            "url": "https://github.com/govCMS/scaffold-tooling",
+            "no-api": true
         },
         {
             "type": "composer",
