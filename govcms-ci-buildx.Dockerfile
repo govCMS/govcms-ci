@@ -56,7 +56,7 @@ RUN  set -eux; \
 ## Adds common GovCMS tooling
 ##
 RUN apt-get update
-RUN apt-get install -y zip unzip ssh xz-utils bats php-cli php-curl
+RUN apt-get install -y zip unzip ssh xz-utils bats php-cli php-curl php-dom
 
 ENV PATH="/govcms/vendor/bin:/usr/local/bin:${PATH}"
 
