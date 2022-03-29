@@ -3,10 +3,6 @@
     "type": "project",
     "repositories": [
         {
-            "type": "vcs",
-            "url": "git@github.com:govCMS/scaffold-tooling.git"
-        },
-        {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         },
@@ -17,7 +13,7 @@
     ],
     "minimum-stability": "alpha",
     "require": {
-        "govcms/scaffold-tooling": "~3",
+        "govcms/scaffold-tooling": "dev-feature/GOVCMS-6775-add-more-banned-functions",
         "symfony/yaml": "~5",
         "symfony/console": "~5"
     },
