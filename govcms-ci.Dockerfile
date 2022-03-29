@@ -1,7 +1,4 @@
-FROM docker/compose:1.25.4 AS docker-compose
-FROM docker:19.03 AS docker
-
-FROM amazeeio/php:7.4-cli-drupal
+FROM uselagoon/php-7.4-cli-drupal:latest
 
 LABEL maintainer="govcms@finance.gov.au"
 LABEL description="GovCMS base image for use in CI processes"
@@ -11,17 +8,28 @@ RUN apk update \
       zip \
       zlib \
       libgcc \
-  && apk add --no-cache -t .deps ca-certificates \
+      py-pip \
+  && apk add --no-cache -t .deps \
+      ca-certificates \
+      python3-dev \
+      libffi-dev \
+      openssl-dev \
+      libc-dev \
+      rust \
+      cargo \
+      make \
   && wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
   && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-2.29-r0.apk \
   && apk add glibc-2.29-r0.apk \
+# Install docker-compose from pip.
+  && pip3 install docker-compose==1.25.4 \
   && rm -rf /var/cache/apk/* \
   && apk del --purge .deps \
   && composer clear-cache \
   && rm -rf /app
 
 # Install shellcheck.
-RUN curl -L -o "/tmp/shellcheck-v0.7.1.tar.xz" "https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz" \
+RUN curl -L -o "/tmp/shellcheck-v0.7.1.tar.xz" "https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.$(uname -m).tar.xz" \
   && tar -C /tmp --xz -xvf "/tmp/shellcheck-v0.7.1.tar.xz" \
   && mv "/tmp/shellcheck-v0.7.1/shellcheck" /usr/bin/ \
   && chmod +x /usr/bin/shellcheck
@@ -32,8 +40,7 @@ RUN apk add --no-cache bats=1.3.0-r0 --repository=http://dl-cdn.alpinelinux.org/
 # Required for docker-compose to find zlib.
 ENV LD_LIBRARY_PATH=/lib:/usr/lib
 
-COPY --from=docker /usr/local/bin/docker /bin
-COPY --from=docker-compose /usr/local/bin/docker-compose /usr/local/bin/docker-compose
+COPY --from=docker:19.03 /usr/local/bin/docker /bin
 
 # Install yq for YAML parsing.
 RUN wget -O /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/2.4.0/yq_linux_amd64" \
@@ -44,7 +51,9 @@ RUN wget -O /usr/local/bin/jq "https://github.com/stedolan/jq/releases/download/
   && chmod +x /usr/local/bin/jq
 
 # Install Ahoy.
-RUN wget -O /usr/local/bin/ahoy "https://github.com/ahoy-cli/ahoy/releases/download/2.0.0/ahoy-bin-linux-amd64" \
+RUN arch=$(uname -m) && arch="${arch/aarch64/arm64}" && arch="${arch/x86_64/amd64}" \
+  && wget -O /tmp/ahoy.tar.gz "https://github.com/ocean/ahoy/releases/download/2.1.0/ahoy_linux_${arch}.tar.gz" \
+  && tar -xf /tmp/ahoy.tar.gz --directory /tmp && mv /tmp/ahoy /usr/local/bin/ahoy \
   && chmod +x /usr/local/bin/ahoy
 
 # Install Goss (and dgoss) for server validation.
@@ -59,7 +68,8 @@ RUN wget -O /usr/local/bin/goss https://github.com/aelsabbahy/goss/releases/down
 RUN touch /usr/local/bin/pygmy \
   && chmod +x /usr/local/bin/pygmy
 
-RUN git --version \
+RUN set -x \
+  && git --version \
   && ssh -V \
   && zip --version \
   && unzip -v \
