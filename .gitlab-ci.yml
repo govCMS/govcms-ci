@@ -9,12 +9,23 @@ stages:
 build:
   stage: build
   script:
+    - BUILDX_VERSION=$(docker buildx version|grep 'github.com/docker/buildx')
     - IMAGE_TAG=$([ $CI_COMMIT_BRANCH = 'master' ] && echo 'latest' || echo 'edge')
     - scripts/prepare
-    - docker buildx create --name govcms-ci-amd-arm --platform linux/amd64,linux/arm64 tcp://localhost:2375
-    - docker buildx ls
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker buildx bake -f docker-compose.yml -f bake.hcl --builder govcms-ci-amd-arm --push
+    - |
+      set -eu
+      if [ ! -z "${BUILDX_VERSION}" ]; then
+        docker buildx create --name govcms-ci-amd-arm --platform linux/amd64,linux/arm64
+        docker buildx ls
+        docker buildx bake -f docker-compose.yml -f bake.hcl --builder govcms-ci-amd-arm --push
+      else
+        docker build -f govcms-ci.Dockerfile -t $CI_REGISTRY/govcms/govcms-ci:${IMAGE_TAG} .
+        docker push $CI_REGISTRY/govcms/govcms-ci:${IMAGE_TAG}
+        docker pull docker:dind
+        docker tag docker:dind $CI_REGISTRY/govcms/govcms-ci/dind:latest
+        docker push $CI_REGISTRY/govcms/govcms-ci/dind:latest
+      fi
   variables:
     DOCKER_HOST: tcp://localhost:2375
   only:
