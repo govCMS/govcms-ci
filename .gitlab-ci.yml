@@ -9,7 +9,7 @@ stages:
 build:
   stage: build
   script:
-    - BUILDX_VERSION=$(docker buildx version|grep 'github.com/docker/buildx')
+    - BUILDX_VERSION=$(docker buildx version|grep 'github.com/docker/buildx') || true
     - IMAGE_TAG=$([ $CI_COMMIT_BRANCH = 'master' ] && echo 'latest' || echo 'edge')
     - scripts/prepare
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
