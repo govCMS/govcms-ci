@@ -57,6 +57,8 @@ RUN wget -O /usr/local/bin/goss https://github.com/aelsabbahy/goss/releases/down
 RUN touch /usr/local/bin/pygmy \
   && chmod +x /usr/local/bin/pygmy
 
+COPY --from=ghcr.io/salsadigitalauorg/shipshape:latest /usr/local/bin/shipshape /usr/local/bin/shipshape
+
 RUN set -x \
   && git --version \
   && ssh -V \
@@ -73,7 +75,8 @@ RUN set -x \
   && docker-compose version \
   && composer --version \
   && npm -v \
-  && node -v
+  && node -v \
+  && shipshape --version
 
 COPY composer.json /govcms/
 ENV COMPOSER_MEMORY_LIMIT=-1
