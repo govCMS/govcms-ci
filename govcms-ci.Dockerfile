@@ -22,25 +22,23 @@ RUN apk update \
   && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-2.29-r0.apk \
   && apk add glibc-2.29-r0.apk \
 # Install docker-compose from pip.
-  && pip3 install docker-compose==1.25.4 \
+  && pip3 install docker-compose==1.29.2 \
   && rm -rf /var/cache/apk/* \
   && apk del --purge .deps \
   && composer clear-cache \
   && rm -rf /app
 
 # Install shellcheck.
-RUN curl -L -o "/tmp/shellcheck-v0.7.1.tar.xz" "https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.$(uname -m).tar.xz" \
-  && tar -C /tmp --xz -xvf "/tmp/shellcheck-v0.7.1.tar.xz" \
-  && mv "/tmp/shellcheck-v0.7.1/shellcheck" /usr/bin/ \
-  && chmod +x /usr/bin/shellcheck
+COPY --from=koalaman/shellcheck-alpine:v0.8.0 /bin/shellcheck /usr/local/bin/shellcheck
 
 # Install BATS.
-RUN apk add --no-cache bats=1.3.0-r0 --repository=http://dl-cdn.alpinelinux.org/alpine/v3.14/main
+COPY --from=bats/bats:1.6.0 /opt/bats /opt/bats
+RUN ln -s /opt/bats/bin/bats /usr/local/bin/bats
 
 # Required for docker-compose to find zlib.
 ENV LD_LIBRARY_PATH=/lib:/usr/lib
 
-COPY --from=docker:19.03 /usr/local/bin/docker /bin
+COPY --from=docker:20.10.14 /usr/local/bin/docker /bin
 
 # Install yq for YAML parsing.
 RUN wget -O /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/2.4.0/yq_linux_amd64" \
