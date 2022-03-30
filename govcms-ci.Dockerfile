@@ -40,6 +40,7 @@ RUN ln -s /opt/bats/bin/bats /usr/local/bin/bats
 ENV LD_LIBRARY_PATH=/lib:/usr/lib
 
 COPY --from=docker:20.10.14 /usr/local/bin/docker /bin
+COPY --from=docker/buildx-bin:latest /buildx /usr/libexec/docker/cli-plugins/docker-buildx
 
 # Install yq for YAML parsing.
 RUN wget -O /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/2.4.0/yq_linux_amd64" \
