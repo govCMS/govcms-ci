@@ -8,22 +8,10 @@ RUN apk update \
       zip \
       zlib \
       libgcc \
-      py-pip \
-  && apk add --no-cache -t .deps \
-      ca-certificates \
-      python3-dev \
-      libffi-dev \
-      openssl-dev \
-      libc-dev \
-      rust \
-      cargo \
-      make \
-      libseccomp \
+  && apk add --no-cache -t .deps ca-certificates \
   && wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
   && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-2.29-r0.apk \
   && apk add glibc-2.29-r0.apk \
-# Install docker-compose from pip.
-  && pip3 install docker-compose==1.29.2 \
   && rm -rf /var/cache/apk/* \
   && apk del --purge .deps \
   && composer clear-cache \
@@ -41,6 +29,7 @@ ENV LD_LIBRARY_PATH=/lib:/usr/lib
 
 COPY --from=docker:20.10.14 /usr/local/bin/docker /bin
 COPY --from=docker/buildx-bin:latest /buildx /usr/libexec/docker/cli-plugins/docker-buildx
+COPY --from=linuxserver/docker-compose:1.29.2-alpine /usr/local/bin/docker-compose /usr/local/bin/docker-compose
 
 # Install yq for YAML parsing.
 RUN wget -O /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/download/2.4.0/yq_linux_amd64" \
@@ -88,5 +77,5 @@ RUN set -x \
 
 COPY composer.json /govcms/
 ENV COMPOSER_MEMORY_LIMIT=-1
-RUN composer self-update --1 && composer install -d /govcms && composer cc
+RUN composer self-update --2 && composer install -d /govcms && composer cc
 ENV PATH="/govcms/vendor/bin:${PATH}"
