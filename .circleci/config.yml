@@ -20,9 +20,10 @@ jobs:
       - run:
           name: Install goss
           command: curl -fsSL https://goss.rocks/install | sh && goss --version
-      - run:
-          name: Build image
-          command: docker build -f govcms-ci.Dockerfile -t govcms/govcms-ci:latest .
-      - run:
-          name: Test image
-          command: dgoss run -i govcms/govcms-ci:latest
+      - run: scmp_sys_resolver faccessat2
+      # - run:
+      #     name: Build image
+      #     command: docker build -f govcms-ci.Dockerfile -t govcms/govcms-ci:latest .
+      # - run:
+      #     name: Test image
+      #     command: dgoss run -i govcms/govcms-ci:latest
