@@ -80,5 +80,5 @@ RUN set -x \
 
 COPY composer.json /govcms/
 ENV COMPOSER_MEMORY_LIMIT=-1
-RUN composer self-update --2 && composer install -d /govcms && composer cc
+RUN composer self-update --1 && composer install -d /govcms && composer cc
 ENV PATH="/govcms/vendor/bin:${PATH}"
