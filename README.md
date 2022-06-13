@@ -20,3 +20,16 @@ IMAGE_TAG={your-desired-tag} docker buildx bake --progress=plain --pull -f bake.
 IMAGE_TAG={your-desired-tag} docker buildx bake --progress=plain --pull -f bake.hcl ci --push
 ```
 
+## Ansible creator image
+
+[Ansible creator](https://quay.io/repository/ansible/creator-ee) contains the tools required for linting and testing Ansible playbooks.
+
+The image pull is failing for some reason on Gitlab, so it has to be built locally.
+
+```shell
+CREATOR_EE_VERSION=${CREATOR_EE_VERSION:-v0.5.2}
+git clone -b ${CREATOR_EE_VERSION} https://github.com/ansible/creator-ee.git
+cd creator-ee
+docker build -t gitlab-registry-production.govcms.amazee.io/govcms/govcms-ci/ansible-creator-ee:${CREATOR_EE_VERSION} .
+docker push gitlab-registry-production.govcms.amazee.io/govcms/govcms-ci/ansible-creator-ee:${CREATOR_EE_VERSION}
+```
