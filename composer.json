@@ -26,6 +26,7 @@
         "drupal/lagoon_logs": "*",
         "drupal/redis": "*",
         "drupal/stage_file_proxy": "*",
+        "drupal/govcms_akamai_purge": "*",
         "drush/drush": "*",
         "webflo/drupal-finder": "*"
     }
