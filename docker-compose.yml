@@ -9,6 +9,8 @@ services:
     build:
       context: .
       dockerfile: govcms-ci.Dockerfile
+      args:
+        GOVCMS_GITHUB_TOKEN: ${GOVCMS_GITHUB_TOKEN:-}
     image: govcms-ci
     environment:
       << : *default-environment

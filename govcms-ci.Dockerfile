@@ -1,4 +1,4 @@
-FROM uselagoon/php-7.4-cli-drupal:latest
+FROM uselagoon/php-8.1-cli-drupal:latest
 
 LABEL maintainer="govcms@finance.gov.au"
 LABEL description="GovCMS base image for use in CI processes"

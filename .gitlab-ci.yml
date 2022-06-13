@@ -20,7 +20,7 @@ build:
         docker buildx ls
         docker buildx bake -f docker-compose.yml -f bake.hcl --builder govcms-ci-amd-arm --push
       else
-        docker build -f govcms-ci.Dockerfile -t $CI_REGISTRY/govcms/govcms-ci:${IMAGE_TAG} .
+        docker build --build-arg GOVCMS_GITHUB_TOKEN=${GOVCMS_GITHUB_TOKEN} -f govcms-ci.Dockerfile -t $CI_REGISTRY/govcms/govcms-ci:${IMAGE_TAG} .
         docker push $CI_REGISTRY/govcms/govcms-ci:${IMAGE_TAG}
         docker pull docker:dind
         docker tag docker:dind $CI_REGISTRY/govcms/govcms-ci/dind:latest
@@ -29,5 +29,6 @@ build:
   variables:
     DOCKER_HOST: tcp://localhost:2375
   only:
+    - feature/bump-php-8.1
     - develop
     - master
