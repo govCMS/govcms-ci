@@ -29,5 +29,10 @@
         "drupal/govcms_akamai_purge": "*",
         "drush/drush": "*",
         "webflo/drupal-finder": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     }
 }
