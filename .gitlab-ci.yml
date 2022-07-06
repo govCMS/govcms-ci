@@ -4,7 +4,13 @@ services:
     command: ["--tls=false"]
 
 stages:
+  - test
   - build
+
+test:
+  stage: test
+  script:
+    - docker build -f govcms-ci.Dockerfile -t $CI_REGISTRY/govcms/govcms-ci:test
 
 build:
   stage: build
