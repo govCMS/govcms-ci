@@ -1,36 +1,34 @@
 {
-    "name": "govcms/govcms-ci",
-    "type": "project",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:govCMS/scaffold-tooling.git"
-        },
-        {
-            "type": "composer",
-            "url": "https://packages.drupal.org/8"
-        },
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        }
-    ],
-    "minimum-stability": "alpha",
-    "require": {
-        "govcms/scaffold-tooling": "~3",
-        "symfony/yaml": "~5",
-        "symfony/console": "~5"
+  "name": "govcms/govcms-ci",
+  "type": "project",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
     },
-    "replace": {
-        "drupal/core": "*",
-        "drupal/chosen_lib": "*",
-        "drupal/clamav": "*",
-        "drupal/console": "*",
-        "drupal/fast_404": "*",
-        "drupal/lagoon_logs": "*",
-        "drupal/redis": "*",
-        "drupal/stage_file_proxy": "*",
-        "drush/drush": "*",
-        "webflo/drupal-finder": "*"
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
     }
+  ],
+  "minimum-stability": "alpha",
+  "require": {
+    "govcms/scaffold-tooling": "~4",
+    "symfony/yaml": "~5",
+    "symfony/console": "~5"
+  },
+  "replace": {
+    "drupal/core": "*",
+    "drupal/chosen_lib": "*",
+    "drupal/clamav": "*",
+    "drupal/console": "*",
+    "drupal/fast_404": "*",
+    "drupal/lagoon_logs": "*",
+    "drupal/redis": "*",
+    "drupal/stage_file_proxy": "*",
+    "drush/drush": "*",
+    "drush/govcms_akamai_purge": "*",
+    "drush/govmcs_akamai_purge": "*",
+    "webflo/drupal-finder": "*"
+  }
 }
