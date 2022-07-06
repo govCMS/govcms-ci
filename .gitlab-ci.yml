@@ -9,6 +9,8 @@ stages:
 
 test:
   stage: test
+  variables:
+    DOCKER_HOST: tcp://localhost:2375
   script:
     - docker build -f govcms-ci.Dockerfile -t govcms/govcms-ci:latest .
     - dgoss run -i govcms/govcms-ci:latest
