@@ -10,7 +10,8 @@ stages:
 test:
   stage: test
   script:
-    - docker build -f govcms-ci.Dockerfile -t $CI_REGISTRY/govcms/govcms-ci:test
+    - docker build -f govcms-ci.Dockerfile -t govcms/govcms-ci:latest .
+    - dgoss run -i govcms/govcms-ci:latest
 
 build:
   stage: build
