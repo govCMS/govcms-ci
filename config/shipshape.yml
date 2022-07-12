@@ -107,6 +107,6 @@ checks:
   phpstan:
     - name: '[FILE] Banned PHP function list'
       binary: /govcms/vendor/bin/phpstan
-      configuration: ./phpstan.neon
+      configuration: /govcms/phpstan.neon
       paths:
         - themes
