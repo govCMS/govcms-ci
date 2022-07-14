@@ -41,8 +41,8 @@ RUN wget -O /usr/local/bin/jq "https://github.com/stedolan/jq/releases/download/
 
 # Install Ahoy.
 RUN arch=$(uname -m) && arch="${arch/aarch64/arm64}" && arch="${arch/x86_64/amd64}" \
-  && wget -O /tmp/ahoy.tar.gz "https://github.com/ocean/ahoy/releases/download/2.1.0/ahoy_linux_${arch}.tar.gz" \
-  && tar -xf /tmp/ahoy.tar.gz --directory /tmp && mv /tmp/ahoy /usr/local/bin/ahoy \
+  && wget -O /tmp/ahoy "https://github.com/ahoy-cli/ahoy/releases/download/2.0.1/ahoy-bin-linux-${arch}" \
+  && mv /tmp/ahoy /usr/local/bin/ahoy \
   && chmod +x /usr/local/bin/ahoy
 
 # Install Goss (and dgoss) for server validation.
