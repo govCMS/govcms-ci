@@ -57,7 +57,7 @@ RUN wget -O /usr/local/bin/goss https://github.com/aelsabbahy/goss/releases/down
 RUN touch /usr/local/bin/pygmy \
   && chmod +x /usr/local/bin/pygmy
 
-COPY --from=ghcr.io/salsadigitalauorg/shipshape:latest /usr/local/bin/shipshape /usr/local/bin/shipshape
+COPY --from=ghcr.io/salsadigitalauorg/shipshape:0.1.13 /usr/local/bin/shipshape /usr/local/bin/shipshape
 
 RUN set -x \
   && git --version \
@@ -78,7 +78,7 @@ RUN set -x \
   && node -v \
   && shipshape --version
 
-COPY composer.json /govcms/
+COPY composer.json config/ /govcms/
 ENV COMPOSER_MEMORY_LIMIT=-1
 RUN composer install -d /govcms && composer cc
 ENV PATH="/govcms/vendor/bin:${PATH}"

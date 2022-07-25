@@ -1,0 +1,107 @@
+checks:
+  file:
+    - name: '[FILE] Illegal files'
+      severity: high
+      path: ./
+      disallowed-pattern: '^(adminer|phpmyadmin|bigdump)?\.php$'
+  yaml:
+    - name: '[FILE] Validate install profile'
+      file: core.extension.yml
+      ignore-missing: true
+      path: config/default
+      values:
+        - key: profile
+          value: govcms
+    - name: '[FILE] Disallowed permissions'
+      severity: high
+      pattern: user.role.*.yml
+      exclude-pattern: user.role.govcms_site_administrator
+      ignore-missing: true
+      path: config/default
+      values:
+        - key: is_admin
+          value: false
+        - key: permissions
+          is-list: true
+          disallowed:
+            - administer config permissions
+            - administer managed modules
+            - administer managed modules permissions
+            - administer modules
+            - administer permissions
+            - administer site configuration
+            - administer software updates
+            - import configuration
+            - synchronize configuration
+            - use PHP for google analytics tracking visibility
+    - name: '[FILE] Validate TFA config'
+      severity: high
+      file: tfa.settings.yml
+      ignore-missing: true
+      path: config/default
+      values:
+        - key: enabled
+          value: 1
+        - key: required_roles.authenticated
+          value: authenticated
+    - name: '[FILE] Ensure only admins can register accounts'
+      file: user.settings.yml
+      ignore-missing: true
+      path: config/default
+      values:
+        - key: register
+          value: admin_only
+    - name: '[FILE] Ensure CSS & JS aggregations are enabled'
+      file: system.performance.yml
+      ignore-missing: true
+      path: config/default
+      values:
+        - key: css.preprocess
+          value: true
+        - key: js.preprocess
+          value: true
+    - name: '[FILE] Ensure no error log displayed'
+      file: system.logging.yml
+      ignore-missing: true
+      path: config/default
+      values:
+        - key: error_level
+          value: hide
+  drupal-file-module:
+    - name: '[FILE] Verify enabled modules'
+      severity: high
+      path: config/default
+      required:
+        - govcms_security
+        - lagoon_logs
+        - tfa
+      disallowed:
+        - dblog
+        - module_permissions_ui
+        - update
+  yamllint:
+    - name: '[FILE] Yaml lint platform files'
+      severity: high
+      files:
+        - .lagoon.yml
+        - docker-compose.yml
+      ignore-missing: true
+    - name: '[FILE] Yaml lint theme files'
+      severity: high
+      path: web/themes
+      pattern: ".*.yml"
+      exclude-pattern: node_modules
+      ignore-missing: true
+    - name: '[FILE] Yaml lint theme files (no web prefix)'
+      severity: high
+      path: themes
+      pattern: ".*.yml"
+      exclude-pattern: node_modules
+      ignore-missing: true
+  phpstan:
+    - name: '[FILE] Banned PHP function list'
+      severity: high
+      binary: /govcms/vendor/bin/phpstan
+      configuration: /govcms/phpstan.neon
+      paths:
+        - themes
