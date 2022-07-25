@@ -6,11 +6,22 @@ services:
 stages:
   - build
 
+workflow:
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "8.x"
+      variables:
+        IMAGE_TAG: "php8"
+    - if: $CI_COMMIT_REF_NAME == "8.x-develop"
+      variables:
+        IMAGE_TAG: "php8-edge"
+    - if: $CI_COMMIT_TAG != null
+      variables:
+        IMAGE_TAG: $CI_COMMIT_TAG
+
 build:
   stage: build
   script:
     - BUILDX_VERSION=$(docker buildx version|grep 'github.com/docker/buildx') || true
-    - IMAGE_TAG=$([ $CI_COMMIT_BRANCH = 'master' ] && echo 'latest' || echo 'edge')
     - scripts/prepare
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - |
@@ -23,14 +34,14 @@ build:
         docker build -f govcms-ci.Dockerfile -t $CI_REGISTRY/govcms/govcms-ci:${IMAGE_TAG} .
         docker push $CI_REGISTRY/govcms/govcms-ci:${IMAGE_TAG}
         docker pull docker:dind
-        docker tag docker:dind $CI_REGISTRY/govcms/govcms-ci/dind:latest
-        docker push $CI_REGISTRY/govcms/govcms-ci/dind:latest
+        docker tag docker:dind $CI_REGISTRY/govcms/govcms-ci/dind:${IMAGE_TAG}
+        docker push $CI_REGISTRY/govcms/govcms-ci/dind:${IMAGE_TAG}
       fi
   variables:
     DOCKER_HOST: tcp://localhost:2375
   only:
-    - develop
-    - master
+    - 8.x-develop
+    - 8.x
 
 build:creator-ee:
   stage: build
