@@ -78,7 +78,7 @@ RUN set -x \
   && node -v \
   && shipshape --version
 
-COPY junit_rewrite.php artefacts/
+COPY junit_rewrite.php /artefacts/
 
 COPY composer.json config/ /govcms/
 ENV COMPOSER_MEMORY_LIMIT=-1
